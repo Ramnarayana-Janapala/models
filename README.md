@@ -1,3 +1,5 @@
 # Machine Learning models
 
-Building Machine leanring models from scratch and how Machine leaning moldes help in different staages of Model Deployment.
+First Model - Building Machine learning models from scratch 
+Data-Pre-Processing - Different feature Selection techniques in Data Pre-processing Stage of Machine Learning Model Deployment.
+
