@@ -1,18 +1,20 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.misc import derivative
+from  sklearn.metrics import mean_absolute_error
 '''
  Data in the X is called features and data in the Y_actual is called labels
  Formula using in the Model Y = -θ₂X^2 -θ₁*X + θ₀
 '''
 
-X = np.arange(-1,1,0.01)
+X = np.arange(-10,10,0.1)
 
 ## Shuffling the ordered data so that we split the Training , Testing and Verification
 # data with all the numerical data ranges in them
 np.random.shuffle(X)
 
-#Calcuated the Y True/Actual/label  value for the feature data set
-Y_actual = -2*X**2 -1*X + 2
+#Calcuated the Y True/Actual/label  value for the feature data set with some noise
+Y_actual = -2*X**2 -1*X + 2 + 2 * np.random.normal(0, 1, len(X))
 
 assert len(X) == len(Y_actual), f'The data sets length should be same'
 
@@ -35,7 +37,7 @@ def get_random_numbers(total_nums):
     :param total_nums:
     :return:
     """
-    return np.random.uniform(-1,1,size=total_nums)
+    return np.random.uniform(-1, 1, size=total_nums)
 
 #Calculate the Y predication value
 def predict_y(x,params):
@@ -44,7 +46,7 @@ def predict_y(x,params):
 
 
 # Definition to train the model
-def model_training(x,y,lr=0.1,epochs=1000):
+def model_training(x,y,lr=0.01, epochs=1000):
     """
     :param x: feature data set
     :param y: label data set
@@ -66,17 +68,23 @@ def model_training(x,y,lr=0.1,epochs=1000):
         for i in range(len(x)):
             # Step 2 Calculate Y predicate
             y_predict = predict_y(x[i],params=params)
-            # Step 3 find the error value for a given record/observation/sample
-            error = y_predict - y[i]
-            cost = cost + error**2
-            dj_dtheta_0 = dj_dtheta_0 + error
-            dj_dtheta_1 = dj_dtheta_1 + error * x[i]
-            dj_dtheta_2 = dj_dtheta_2 + error * x[i]**2
+            error =  y_predict - Y_actual[i]
+            cost = cost + abs(error)
+            if error > 0:
+                sign_value = 1
+            elif error < 0:
+                sign_value = -1
+            else:
+                sign_value = 0
+
+            dj_dtheta_0 = dj_dtheta_0 + sign_value * 1
+            dj_dtheta_1 = dj_dtheta_1 + sign_value * x[i]
+            dj_dtheta_2 = dj_dtheta_2 + sign_value * x[i]**2
         cost = cost/len(x)
         cost_per_epoch_l.append(cost)
-        params[0] = params[0] - (lr * 2 * dj_dtheta_0) / len(x)
-        params[1] = params[1] - (lr * 2 * dj_dtheta_1) / len(x)
-        params[2] = params[2] - (lr * 2 * dj_dtheta_2) / len(x)
+        params[0] = params[0] - (lr * dj_dtheta_0) / len(x)
+        params[1] = params[1] - (lr * dj_dtheta_1) / len(x)
+        params[2] = params[2] - (lr * dj_dtheta_2) / len(x)
     return params, cost_per_epoch_l
 
 cal_params, cost_per_epoch = model_training(x_train_data,y_train_data)

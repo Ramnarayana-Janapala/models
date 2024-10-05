@@ -12,7 +12,7 @@ X = np.arange(-1,1,0.01)
 np.random.shuffle(X)
 
 #Calcuated the Y True/Actual/label  value for the feature data set
-Y_actual = -2*X**2 -1*X + 2
+Y_actual = -2*X**2 -1*X + 2 + 0.2 * np.random.normal(0, 1, len(X))
 
 assert len(X) == len(Y_actual), f'The data sets length should be same'
 
