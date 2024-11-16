@@ -14,7 +14,7 @@ X = np.arange(-10,10,0.1)
 np.random.shuffle(X)
 
 #Calcuated the Y True/Actual/label  value for the feature data set with some noise
-Y_actual = -2*X**2 -1*X + 2 + 2 * np.random.normal(0, 1, len(X))
+Y_actual = -2*X**2 -1*X + 2 + 0.2 * np.random.normal(0, 1, len(X))
 
 assert len(X) == len(Y_actual), f'The data sets length should be same'
 
@@ -41,7 +41,7 @@ def get_random_numbers(total_nums):
 
 #Calculate the Y predication value
 def predict_y(x,params):
-    y_predict = params[0] + params[1] * x + params[2] * x**2
+    y_predict =  params[3] + params[0] + params[1] * x + params[2] * x**2
     return y_predict
 
 
@@ -55,7 +55,7 @@ def model_training(x,y,lr=0.01, epochs=1000):
     :return:
     """
     # Step 1 , Random Parameters
-    params = get_random_numbers(3)
+    params = get_random_numbers(4)
     print(f"Random Values : {params}")
 
     cost_per_epoch_l = []
@@ -64,7 +64,7 @@ def model_training(x,y,lr=0.01, epochs=1000):
     for _ in range(epochs):
         cost = 0
         # For a 2 degree polynomial you have three theta value (θ₂X^2+θ₁*X + θ₀)
-        dj_dtheta_0, dj_dtheta_1, dj_dtheta_2 = 0, 0, 0
+        dj_dtheta_0, dj_dtheta_1, dj_dtheta_2, dj_dtheta_3 = 0, 0, 0,0
         for i in range(len(x)):
             # Step 2 Calculate Y predicate
             y_predict = predict_y(x[i],params=params)
@@ -75,16 +75,18 @@ def model_training(x,y,lr=0.01, epochs=1000):
             elif error < 0:
                 sign_value = -1
             else:
-                sign_value = 0
+                sign_value = 1
 
             dj_dtheta_0 = dj_dtheta_0 + sign_value * 1
             dj_dtheta_1 = dj_dtheta_1 + sign_value * x[i]
             dj_dtheta_2 = dj_dtheta_2 + sign_value * x[i]**2
+            dj_dtheta_3 = dj_dtheta_3 + 0
         cost = cost/len(x)
         cost_per_epoch_l.append(cost)
         params[0] = params[0] - (lr * dj_dtheta_0) / len(x)
         params[1] = params[1] - (lr * dj_dtheta_1) / len(x)
         params[2] = params[2] - (lr * dj_dtheta_2) / len(x)
+        params[3] = params[3] - (lr * dj_dtheta_3) / len(x)
     return params, cost_per_epoch_l
 
 cal_params, cost_per_epoch = model_training(x_train_data,y_train_data)
@@ -97,8 +99,9 @@ for i in range(len(x_test_data)):
 
 
 plt.figure()
-plt.plot(x_test_data,y_predict_test,"o",color='red')
+plt.plot(x_train_data,y_train_data,"o",color='red')
 plt.plot(x_test_data,y_test_data,"*",color='green')
+plt.plot(x_test_data,y_predict_test,"*",color='blue')
 plt.xlabel("X")
 plt.ylabel("Y")
 plt.show()
