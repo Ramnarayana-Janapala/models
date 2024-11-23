@@ -1,14 +1,16 @@
-from pyexpat import features
-
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from scipy.ndimage import rotate
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
-
+"""
+ Predicating the Life Expectancy of a Person based on the country.
+ Model Used : Liner Regression
+ Used Forward filling for NaN values Replacement
+ Used R^2 Score to evaluate the model
+"""
 def data_analysis(le):
     le_head = le.head(10)
     print(le.columns)
